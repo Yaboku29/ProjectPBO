@@ -11,19 +11,12 @@ package Model.Transaction;
 import java.time.LocalDate;
 
 public class Transaction {
-
     private int id;
-
     private int walletId;
-
     private int categoryId;
-
     private String jenis;
-
     private double jumlah;
-
     private String deskripsi;
-
     private LocalDate tanggal;
 
     public Transaction(){}

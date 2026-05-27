@@ -12,9 +12,7 @@ public class Wallet {
 
     private int id;
     private int userId;
-
     private String nama;
-
     private double saldo;
 
     public Wallet() {}

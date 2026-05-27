@@ -11,9 +11,7 @@ package Model.Report;
 public class Report {
 
     private double totalPemasukan;
-
     private double totalPengeluaran;
-
     private double saldoAkhir;
 
     public Report(){}

@@ -11,11 +11,8 @@ package Model.Budget;
 public class Budget {
 
     private int id;
-
     private int categoryId;
-
     private double batas;
-
     private double terpakai;
 
     public Budget(){}

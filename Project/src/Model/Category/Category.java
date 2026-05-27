@@ -11,7 +11,6 @@ package Model.Category;
 public class Category {
 
     private int id;
-
     private String nama;
 
     public Category() {}
