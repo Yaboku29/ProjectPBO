@@ -33,8 +33,13 @@ public class Wallet {
         saldo += jumlah;
     }
 
-    public void kurangiSaldo(double jumlah) {
-        saldo -= jumlah;
+    public boolean kurangiSaldo(double nominal) {
+        if (nominal > saldo) {
+            return false;
+        }
+        saldo -= nominal;
+        return true;
+
     }
 
     public int getId() {

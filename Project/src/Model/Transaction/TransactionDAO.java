@@ -8,6 +8,7 @@ package Model.Transaction;
  *
  * @author Admin
  */
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class TransactionDAO {
@@ -58,4 +59,100 @@ public class TransactionDAO {
         }
         return false;
     }
+
+    public ArrayList<Transaction>
+    getByWalletId(
+            int walletId
+    ){
+
+        ArrayList<Transaction>
+                hasil =
+                new ArrayList<>();
+
+        for(
+                Transaction trx
+                :
+                transactions
+        ){
+
+            if(
+                    trx.getWalletId()
+                    ==
+                    walletId
+            ){
+
+                hasil.add(trx);
+
+            }
+
+        }
+
+        return hasil;
+
+    }
+
+
+    public ArrayList<Transaction>
+    getByCategory(
+            int categoryId
+    ){
+
+        ArrayList<Transaction>
+                hasil =
+                new ArrayList<>();
+
+        for(
+                Transaction trx
+                :
+                transactions
+        ){
+
+            if(
+                    trx.getCategoryId()
+                    ==
+                    categoryId
+            ){
+
+                hasil.add(trx);
+
+            }
+
+        }
+
+        return hasil;
+
+    }
+
+
+    public ArrayList<Transaction>
+    getByDate(LocalDate tanggal){
+
+        ArrayList<Transaction>
+                hasil =
+                new ArrayList<>();
+
+        for(
+                Transaction trx
+                :
+                transactions
+        ){
+
+            if(
+                    trx
+                    .getTanggal()
+                    .equals(
+                            tanggal
+                    )
+            ){
+
+                hasil.add(trx);
+
+            }
+
+        }
+
+        return hasil;
+
+    }
+
 }

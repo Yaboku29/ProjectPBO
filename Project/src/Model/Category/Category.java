@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Model.Category;
-
+import Model.TransactionType;
 /**
  *
  * @author Admin
@@ -11,31 +11,32 @@ package Model.Category;
 public class Category {
 
     private int id;
+
     private String nama;
 
-    public Category() {}
+    private TransactionType jenis;
 
     public Category(
             int id,
-            String nama
+            String nama,
+            TransactionType jenis
     ) {
+
         this.id=id;
         this.nama=nama;
+        this.jenis=jenis;
+
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id=id;
-    }
-
     public String getNama() {
         return nama;
     }
 
-    public void setNama(String nama) {
-        this.nama=nama;
+    public TransactionType getJenis() {
+        return jenis;
     }
 }

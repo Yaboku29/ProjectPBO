@@ -11,30 +11,44 @@ package Model.Budget;
 public class Budget {
 
     private int id;
-    private int categoryId;
-    private double batas;
-    private double terpakai;
 
-    public Budget(){}
+    private int walletId;
+
+    private double limitHarian;
 
     public Budget(
             int id,
-            int categoryId,
-            double batas,
-            double terpakai
-    ){
+            int walletId,
+            double limitHarian
+    ) {
+
         this.id=id;
-        this.categoryId=categoryId;
-        this.batas=batas;
-        this.terpakai=terpakai;
+
+        this.walletId=walletId;
+
+        this.limitHarian=limitHarian;
+
     }
 
-    public double sisaBudget(){
-        return batas-terpakai;
+    public int getId() {
+        return id;
     }
 
-    public boolean melewatiLimit(){
-        return terpakai>batas;
+    public int getWalletId() {
+        return walletId;
+    }
+
+    public double getLimitHarian() {
+        return limitHarian;
+    }
+
+    public void setLimitHarian(
+            double limitHarian
+    ) {
+
+        this.limitHarian=
+                limitHarian;
+
     }
 
 }
