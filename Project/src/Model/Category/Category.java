@@ -39,4 +39,14 @@ public class Category {
     public TransactionType getJenis() {
         return jenis;
     }
+    @Override
+    public String toString(){
+
+        return nama
+                +
+                " - "
+                +
+                jenis;
+
+    }
 }
