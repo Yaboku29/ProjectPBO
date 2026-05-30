@@ -3,12 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Model.Budget;
-
+import Model.FinancialRecord;
+import Model.Wallet.*;
 /**
  *
  * @author Admin
  */
-public class Budget {
+public class Budget extends FinancialRecord{
 
     private int id;
 
@@ -22,21 +23,12 @@ public class Budget {
             double limitHarian
     ) {
 
-        this.id=id;
-
-        this.walletId=walletId;
+        super(id,walletId);
 
         this.limitHarian=limitHarian;
 
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public int getWalletId() {
-        return walletId;
-    }
 
     public double getLimitHarian() {
         return limitHarian;

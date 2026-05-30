@@ -5,8 +5,8 @@
 package Model.Transaction;
 
 import java.time.LocalDate;
-
-public class Transaction {
+import Model.FinancialRecord;
+public class Transaction extends FinancialRecord {
 
     private int id;
     private int walletId;
@@ -29,9 +29,7 @@ public class Transaction {
             LocalDate tanggal
     ){
 
-        this.id=id;
-
-        this.walletId=walletId;
+        super(id,walletId);
 
         this.categoryId=categoryId;
 
@@ -41,24 +39,6 @@ public class Transaction {
 
         this.tanggal=tanggal;
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id=id;
-    }
-
-    public int getWalletId() {
-        return walletId;
-    }
-
-    public void setWalletId(
-            int walletId
-    ){
-        this.walletId=walletId;
     }
 
     public int getCategoryId() {
