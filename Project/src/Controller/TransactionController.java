@@ -15,20 +15,15 @@ public class TransactionController {
     private WalletDAO walletDAO;
 
     private BudgetDAO budgetDAO;
+    
+    
+    public TransactionController() {
 
-    public TransactionController(
+        this.walletDAO = new WalletDAO();
 
-            WalletDAO walletDAO,
-            CategoryDAO categoryDAO,
-            BudgetDAO budgetDAO
+        this.categoryDAO = new CategoryDAO();
 
-    ) {
-
-        this.walletDAO = walletDAO;
-
-        this.categoryDAO = categoryDAO;
-
-        this.budgetDAO = budgetDAO;
+        this.budgetDAO = new BudgetDAO();
 
         transactionDAO = new TransactionDAO();
 
@@ -44,7 +39,7 @@ public class TransactionController {
     // TAMBAH TRANSAKSI
     // =========================
 
-    public void tambahTransaksi(
+    public boolean tambahTransaksi(
             Transaction trx
     ) {
 
@@ -62,11 +57,11 @@ public class TransactionController {
                 wallet == null
         ) {
 
-            System.out.println(
-                    "Wallet tidak ditemukan"
-            );
+                System.out.println(
+                        "Wallet tidak ditemukan"
+                );
 
-            return;
+                return false;
 
         }
 
@@ -84,11 +79,11 @@ public class TransactionController {
                 category == null
         ) {
 
-            System.out.println(
-                    "Kategori tidak ditemukan"
-            );
+                System.out.println(
+                        "Kategori tidak ditemukan"
+                );
 
-            return;
+                return false;
 
         }
 
@@ -114,19 +109,19 @@ public class TransactionController {
                 &&
                 jenis
                 ==
-                TransactionType.Pengeluaran
+                TransactionType.PENGELUARAN
         ) {
 
-            double totalHariIni = 0;
+                double totalHariIni = 0;
 
-            for (
-                    Transaction t
-                    :
-                    transactionDAO
-                    .getByDate(
-                            trx.getTanggal()
-                    )
-            ) {
+                for (
+                        Transaction t
+                        :
+                        transactionDAO
+                        .getByDate(
+                                trx.getTanggal()
+                        )
+                ) {
 
                 Category c =
                         categoryDAO
@@ -141,34 +136,34 @@ public class TransactionController {
                         &&
                         c.getJenis()
                         ==
-                        TransactionType.Pengeluaran
+                        TransactionType.PENGELUARAN
                 ) {
 
-                    totalHariIni +=
-                            t.getJumlah();
+                        totalHariIni +=
+                                t.getJumlah();
 
                 }
 
-            }
+                }
 
-            double totalBaru =
-                    totalHariIni
-                    +
-                    trx.getJumlah();
+                double totalBaru =
+                        totalHariIni
+                        +
+                        trx.getJumlah();
 
-            if (
-                    totalBaru
-                    >
-                    budget.getLimitHarian()
-            ) {
+                if (
+                        totalBaru
+                        >
+                        budget.getLimitHarian()
+                ) {
 
                 System.out.println(
                         "Melebihi budget harian"
                 );
 
-                return;
+                return false;
 
-            }
+                }
 
         }
 
@@ -179,33 +174,52 @@ public class TransactionController {
         if (
                 jenis
                 ==
-                TransactionType.Pemasukan
+                TransactionType.PEMASUKAN
         ) {
 
-            wallet.tambahSaldo(
-                    trx.getJumlah()
-            );
+                wallet.tambahSaldo(
+                        trx.getJumlah()
+                );
 
         }
 
         else {
 
-            boolean cukup =
-                    wallet.kurangiSaldo(
-                            trx.getJumlah()
-                    );
+                boolean cukup =
+                        wallet.kurangiSaldo(
+                                trx.getJumlah()
+                        );
 
-            if (
-                    !cukup
-            ) {
+                if (
+                        !cukup
+                ) {
 
                 System.out.println(
                         "Saldo tidak cukup"
                 );
 
-                return;
+                return false;
 
-            }
+                }
+
+        }
+
+        // ======================
+        // UPDATE WALLET
+        // ======================
+
+        boolean updateWallet =
+                walletDAO.updateWallet(
+                        wallet
+                );
+
+        if(!updateWallet){
+
+                System.out.println(
+                        "Gagal update wallet"
+                );
+
+                return false;
 
         }
 
@@ -222,7 +236,13 @@ public class TransactionController {
                 "Transaksi berhasil"
         );
 
+        return true;
     }
+
+                
+
+
+
 
     // =========================
     // DELETE TRANSACTION
@@ -269,7 +289,7 @@ public class TransactionController {
         if (
                 category.getJenis()
                 ==
-                TransactionType.Pengeluaran
+                TransactionType.PENGELUARAN
         ) {
 
             wallet.tambahSaldo(
@@ -348,7 +368,7 @@ public class TransactionController {
         if (
                 oldCategory.getJenis()
                 ==
-                TransactionType.Pengeluaran
+                TransactionType.PENGELUARAN
         ) {
 
             wallet.tambahSaldo(
@@ -372,7 +392,7 @@ public class TransactionController {
         if (
                 newCategory.getJenis()
                 ==
-                TransactionType.Pengeluaran
+                TransactionType.PENGELUARAN
         ) {
 
             boolean cukup =

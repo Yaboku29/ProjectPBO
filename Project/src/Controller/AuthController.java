@@ -13,37 +13,12 @@ public class AuthController {
 
     }
 
-    public boolean signup(
-
-        String username,
-
-        String nama,
-
-        String email,
-
-        String password
-
-    ){
-
-        User user =
-                new User(
-
-                        0,
-
-                        username,
-
-                        nama,
-
-                        email,
-
-                        password
-
-                );
-
+    public boolean register(User user){
         return userDAO
                 .createUser(user);
 
     }
+
 
     public User login(
 

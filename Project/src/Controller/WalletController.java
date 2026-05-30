@@ -9,6 +9,7 @@ package Controller;
  * @author Admin
  */
 import java.util.ArrayList;
+import Model.Wallet.*;
 
 public class WalletController {
     private WalletDAO walletDAO;
