@@ -73,4 +73,8 @@ public class Wallet {
     public void setSaldo(double saldo) {
         this.saldo=saldo;
     }
+    @Override
+    public String toString(){
+        return nama;
+    }
 }
