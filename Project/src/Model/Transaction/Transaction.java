@@ -4,19 +4,18 @@
  */
 package Model.Transaction;
 
-/**
- *
- * @author Admin
- */
 import java.time.LocalDate;
 
 public class Transaction {
+
     private int id;
     private int walletId;
     private int categoryId;
-    private String jenis;
+
     private double jumlah;
+
     private String deskripsi;
+
     private LocalDate tanggal;
 
     public Transaction(){}
@@ -25,7 +24,6 @@ public class Transaction {
             int id,
             int walletId,
             int categoryId,
-            String jenis,
             double jumlah,
             String deskripsi,
             LocalDate tanggal
@@ -37,26 +35,12 @@ public class Transaction {
 
         this.categoryId=categoryId;
 
-        this.jenis=jenis;
-
         this.jumlah=jumlah;
 
         this.deskripsi=deskripsi;
 
         this.tanggal=tanggal;
 
-    }
-
-    public boolean isExpense(){
-        return jenis.equalsIgnoreCase(
-                "pengeluaran"
-        );
-    }
-
-    public boolean isIncome(){
-        return jenis.equalsIgnoreCase(
-                "pemasukan"
-        );
     }
 
     public int getId() {
@@ -85,16 +69,6 @@ public class Transaction {
             int categoryId
     ){
         this.categoryId=categoryId;
-    }
-
-    public String getJenis() {
-        return jenis;
-    }
-
-    public void setJenis(
-            String jenis
-    ){
-        this.jenis=jenis;
     }
 
     public double getJumlah() {
