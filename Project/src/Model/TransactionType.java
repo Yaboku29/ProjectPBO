@@ -9,5 +9,5 @@ package Model;
  * @author Admin
  */
 public enum TransactionType {
-    Pemasukan,Pengeluaran;
+    PEMASUKAN,PENGELUARAN
 }
