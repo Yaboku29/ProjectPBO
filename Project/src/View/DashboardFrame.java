@@ -22,7 +22,9 @@ public class DashboardFrame extends JFrame {
     private JButton walletButton;
 
     private JButton transactionButton;
-
+    
+    private JButton reportButton;
+    
     private JButton logoutButton;
 
     private WalletDAO walletDAO;
@@ -102,7 +104,12 @@ public class DashboardFrame extends JFrame {
                 new JButton(
                         "Transaction"
                 );
-
+        
+        reportButton =
+            new JButton(
+                    "Daily Report"
+            );
+        
         logoutButton =
                 new JButton(
                         "Logout"
@@ -127,7 +134,11 @@ public class DashboardFrame extends JFrame {
         add(
                 transactionButton
         );
-
+        
+        add(
+                reportButton
+        );
+        
         add(
                 logoutButton
         );
@@ -177,7 +188,18 @@ public class DashboardFrame extends JFrame {
                 }
 
         );
+        
+        // =========================
+        // DAILY REPORT
+        // =========================
+        
+        reportButton
+        .addActionListener(e -> {
 
+            new ReportFrame();
+
+        });
+        
         // =========================
         // LOGOUT ACTION
         // =========================
