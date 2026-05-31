@@ -510,4 +510,95 @@ public class TransactionDAO {
         return transactions;
 
     }
+    
+    public ArrayList<Transaction>
+    getByDateAndUser(
+
+            LocalDate tanggal,
+            int userId
+
+    ){
+
+        ArrayList<Transaction>
+                transactions =
+                new ArrayList<>();
+
+        String query =
+
+                "SELECT t.* " +
+
+                "FROM transactions t " +
+
+                "JOIN wallets w " +
+
+                "ON t.wallet_id = w.id " +
+
+                "WHERE t.tanggal=? " +
+
+                "AND w.userID=?";
+
+        try(
+
+                Connection conn =
+                        Connector.connect();
+
+                PreparedStatement ps =
+                        conn.prepareStatement(
+                                query
+                        )
+
+        ){
+
+            ps.setDate(
+                    1,
+                    java.sql.Date.valueOf(
+                            tanggal
+                    )
+            );
+
+            ps.setInt(
+                    2,
+                    userId
+            );
+
+            ResultSet rs =
+                    ps.executeQuery();
+
+            while(rs.next()){
+
+                Transaction trx =
+                        new Transaction(
+
+                                rs.getInt("id"),
+
+                                rs.getInt("wallet_id"),
+
+                                rs.getInt("category_id"),
+
+                                rs.getDouble("jumlah"),
+
+                                rs.getString("deskripsi"),
+
+                                rs.getDate("tanggal")
+                                .toLocalDate()
+
+                        );
+
+                transactions.add(
+                        trx
+                );
+
+            }
+
+        }
+
+        catch(Exception e){
+
+            e.printStackTrace();
+
+        }
+
+        return transactions;
+
+    }
 }

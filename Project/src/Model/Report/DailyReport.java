@@ -1,5 +1,6 @@
 package Model.Report;
 
+import Helper.Session;
 import Model.Transaction.*;
 import Model.Category.*;
 import Model.TransactionType;
@@ -22,9 +23,7 @@ public class DailyReport extends ReportGenerator {
         ArrayList<Transaction>
                 transactions =
                 transactionDAO
-                .getByDate(
-                        LocalDate.now()
-                );
+                .getByDateAndUser(LocalDate.now(), Session.currentUser.getId());
 
         double totalPemasukan = 0;
 
