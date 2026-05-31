@@ -27,6 +27,8 @@ public class TransactionFrame extends JFrame {
     private DefaultTableModel tableModel;
 
     private JButton tambahButton;
+    
+    private JButton editButton;
 
     private JButton deleteButton;
 
@@ -41,7 +43,7 @@ public class TransactionFrame extends JFrame {
     private CategoryDAO categoryDAO;
 
     public TransactionFrame(){
-
+        
         transactionDAO =
                 new TransactionDAO();
 
@@ -119,19 +121,26 @@ public class TransactionFrame extends JFrame {
                 new JButton(
                         "Delete Transaction"
                 );
-
+        
+        editButton =
+        new JButton(
+                "Edit Transaction"
+        );
+        
         backButton =
                 new JButton(
                         "Back"
                 );
-
+        
         JPanel buttonPanel =
                 new JPanel();
 
         buttonPanel.add(
                 tambahButton
         );
-
+        buttonPanel.add(
+                editButton
+        );
         buttonPanel.add(
                 deleteButton
         );
@@ -161,6 +170,16 @@ public class TransactionFrame extends JFrame {
         tambahButton.addActionListener(e -> {
 
             tambahTransaction();
+
+        });
+        
+        // =========================
+        // ACTION EDIT
+        // =========================
+        
+        editButton.addActionListener(e -> {
+
+            editTransaction();
 
         });
 
@@ -514,21 +533,181 @@ public class TransactionFrame extends JFrame {
 
         if(confirm == JOptionPane.YES_OPTION){
 
-            transactionDAO
-            .deleteTransaction(id);
+            boolean success =
+                transactionController
+                .deleteTransaction(id);
+
+            if(success){
+
+                JOptionPane.showMessageDialog(
+
+                        this,
+
+                        "Transaction berhasil dihapus"
+
+                );
+
+                loadTable();
+
+            }
+
+                else{
+
+                JOptionPane.showMessageDialog(
+
+                        this,
+
+                        "Gagal menghapus transaction"
+
+                );
+
+            }
+
+        }
+
+    }
+    private void editTransaction(){
+        int selectedRow =
+                transactionTable
+                .getSelectedRow();
+
+        if(selectedRow == -1){
 
             JOptionPane.showMessageDialog(
 
                     this,
 
-                    "Transaction berhasil dihapus"
+                    "Pilih transaksi dahulu"
 
             );
 
-            loadTable();
+            return;
+
+        }
+
+        int id =
+                (int)
+                tableModel.getValueAt(
+                        selectedRow,
+                        0
+                );
+
+        String deskripsiLama =
+                (String)
+                tableModel.getValueAt(
+                        selectedRow,
+                        4
+                );
+
+        String tanggalLama =
+                tableModel
+                .getValueAt(
+                        selectedRow,
+                        5
+                )
+                .toString();
+
+        // ======================
+        // INPUT BARU
+        // ======================
+
+        String deskripsiBaru =
+                JOptionPane.showInputDialog(
+
+                        this,
+
+                        "Edit Deskripsi",
+
+                        deskripsiLama
+
+                );
+
+        if(deskripsiBaru == null){
+
+            return;
+
+        }
+
+        String tanggalBaru =
+                JOptionPane.showInputDialog(
+
+                        this,
+
+                        "Edit Tanggal (YYYY-MM-DD)",
+
+                        tanggalLama
+
+                );
+
+        if(tanggalBaru == null){
+
+            return;
+
+        }
+
+        try{
+
+            Transaction trx =
+                    new Transaction();
+
+            trx.setId(id);
+
+            trx.setDeskripsi(
+                    deskripsiBaru
+            );
+
+            trx.setTanggal(
+
+                    LocalDate.parse(
+                            tanggalBaru
+                    )
+
+            );
+
+            boolean success =
+                    transactionController.updateTransaction(
+                            trx
+                    );
+
+            if(success){
+
+                JOptionPane.showMessageDialog(
+
+                        this,
+
+                        "Transaction berhasil diupdate"
+
+                );
+
+                loadTable();
+
+            }
+
+            else{
+
+                JOptionPane.showMessageDialog(
+
+                        this,
+
+                        "Update gagal"
+
+                );
+
+            }
+
+        }
+
+        catch(Exception e){
+
+            JOptionPane.showMessageDialog(
+
+                    this,
+
+                    "Format tanggal salah"
+
+            );
 
         }
 
     }
-
 }

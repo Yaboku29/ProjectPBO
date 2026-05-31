@@ -25,5 +25,10 @@ public class FinancialRecord {
     public int getWalletId() {
         return walletId;
     }
-
+    public void setId(int id){
+        this.id=id;
+    }
+    public void setWalledId(int walletId){
+        this.walletId=walletId;
+    }
 }

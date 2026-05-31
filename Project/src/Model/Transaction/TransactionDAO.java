@@ -207,14 +207,12 @@ public class TransactionDAO {
     public boolean updateTransaction(
         Transaction trx
     ){
-
         String query =
+
                 "UPDATE transactions " +
-                "SET wallet_id=?, " +
-                "category_id=?, " +
-                "jumlah=?, " +
-                "deskripsi=?, " +
-                "tanggal=? " +
+
+                "SET deskripsi=?, tanggal=? " +
+
                 "WHERE id=?";
 
         try(
@@ -229,48 +227,33 @@ public class TransactionDAO {
 
         ){
 
-            ps.setInt(
-                    1,
-                    trx.getWalletId()
-            );
+                ps.setString(
+                        1,
+                        trx.getDeskripsi()
+                );
 
-            ps.setInt(
-                    2,
-                    trx.getCategoryId()
-            );
+                ps.setDate(
+                        2,
+                        java.sql.Date.valueOf(
+                                trx.getTanggal()
+                        )
+                );
 
-            ps.setDouble(
-                    3,
-                    trx.getJumlah()
-            );
+                ps.setInt(
+                        3,
+                        trx.getId()
+                );
 
-            ps.setString(
-                    4,
-                    trx.getDeskripsi()
-            );
+                int rows =
+                        ps.executeUpdate();
 
-            ps.setDate(
-                    5,
-                    Date.valueOf(
-                            trx.getTanggal()
-                    )
-            );
-
-            ps.setInt(
-                    6,
-                    trx.getId()
-            );
-
-            int rows =
-                    ps.executeUpdate();
-
-            return rows > 0;
+                return rows > 0;
 
         }
 
-        catch(SQLException e){
+        catch(Exception e){
 
-            e.printStackTrace();
+                e.printStackTrace();
 
         }
 

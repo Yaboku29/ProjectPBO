@@ -248,9 +248,82 @@ public class TransactionController {
     // DELETE TRANSACTION
     // =========================
 
-    public void deleteTransaction(
-            int transactionId
-    ) {
+//    public void deleteTransaction(
+//            int transactionId
+//    ) {
+//
+//        Transaction trx =
+//                transactionDAO
+//                .getTransaction(
+//                        transactionId
+//                );
+//
+//        if (
+//                trx == null
+//        ) {
+//
+//            System.out.println(
+//                    "Transaksi tidak ditemukan"
+//            );
+//
+//            return;
+//
+//        }
+//
+//        Wallet wallet =
+//                walletDAO
+//                .getWallet(
+//                        trx.getWalletId()
+//                );
+//
+//        Category category =
+//                categoryDAO
+//                .getCategory(
+//                        trx.getCategoryId()
+//                );
+//
+//        // ======================
+//        // KEMBALIKAN SALDO
+//        // ======================
+//
+//        if (
+//                category.getJenis()
+//                ==
+//                TransactionType.PENGELUARAN
+//        ) {
+//
+//            wallet.tambahSaldo(
+//                    trx.getJumlah()
+//            );
+//
+//        }
+//
+//        else {
+//
+//            wallet.kurangiSaldo(
+//                    trx.getJumlah()
+//            );
+//
+//        }
+//
+//        transactionDAO
+//                .deleteTransaction(
+//                        transactionId
+//                );
+//
+//        System.out.println(
+//                "Transaksi dihapus"
+//        );
+//
+//    }
+
+    public boolean deleteTransaction(
+        int transactionId
+    ){
+
+        // ======================
+        // AMBIL TRANSACTION
+        // ======================
 
         Transaction trx =
                 transactionDAO
@@ -258,17 +331,15 @@ public class TransactionController {
                         transactionId
                 );
 
-        if (
-                trx == null
-        ) {
+        if(trx == null){
 
-            System.out.println(
-                    "Transaksi tidak ditemukan"
-            );
-
-            return;
+            return false;
 
         }
+
+        // ======================
+        // AMBIL WALLET
+        // ======================
 
         Wallet wallet =
                 walletDAO
@@ -276,161 +347,209 @@ public class TransactionController {
                         trx.getWalletId()
                 );
 
+        if(wallet == null){
+
+            return false;
+
+        }
+
+        // ======================
+        // AMBIL CATEGORY
+        // ======================
+
         Category category =
                 categoryDAO
                 .getCategory(
                         trx.getCategoryId()
                 );
 
+        if(category == null){
+
+            return false;
+
+        }
+
         // ======================
-        // KEMBALIKAN SALDO
+        // ROLLBACK SALDO
         // ======================
 
-        if (
+        if(
                 category.getJenis()
                 ==
-                TransactionType.PENGELUARAN
-        ) {
-
-            wallet.tambahSaldo(
-                    trx.getJumlah()
-            );
-
-        }
-
-        else {
-
-            wallet.kurangiSaldo(
-                    trx.getJumlah()
-            );
-
-        }
-
-        transactionDAO
-                .deleteTransaction(
-                        transactionId
-                );
-
-        System.out.println(
-                "Transaksi dihapus"
-        );
-
-    }
-
-    // =========================
-    // UPDATE TRANSACTION
-    // =========================
-
-    public void updateTransaction(
-            Transaction trxBaru
-    ) {
-
-        Transaction trxLama =
-                transactionDAO
-                .getTransaction(
-                        trxBaru.getId()
-                );
-
-        if (
-                trxLama == null
-        ) {
-
-            System.out.println(
-                    "Transaksi tidak ditemukan"
-            );
-
-            return;
-
-        }
-
-        Wallet wallet =
-                walletDAO
-                .getWallet(
-                        trxLama.getWalletId()
-                );
-
-        Category oldCategory =
-                categoryDAO
-                .getCategory(
-                        trxLama.getCategoryId()
-                );
-
-        Category newCategory =
-                categoryDAO
-                .getCategory(
-                        trxBaru.getCategoryId()
-                );
-
-        // ======================
-        // BALIK EFEK LAMA
-        // ======================
-
-        if (
-                oldCategory.getJenis()
-                ==
-                TransactionType.PENGELUARAN
-        ) {
-
-            wallet.tambahSaldo(
-                    trxLama.getJumlah()
-            );
-
-        }
-
-        else {
-
-            wallet.kurangiSaldo(
-                    trxLama.getJumlah()
-            );
-
-        }
-
-        // ======================
-        // TERAPKAN BARU
-        // ======================
-
-        if (
-                newCategory.getJenis()
-                ==
-                TransactionType.PENGELUARAN
-        ) {
+                TransactionType.PEMASUKAN
+        ){
 
             boolean cukup =
                     wallet.kurangiSaldo(
-                            trxBaru.getJumlah()
+                            trx.getJumlah()
                     );
 
-            if (
-                    !cukup
-            ) {
+            if(!cukup){
 
-                System.out.println(
-                        "Saldo tidak cukup"
-                );
-
-                return;
+                return false;
 
             }
 
         }
 
-        else {
+        else{
 
             wallet.tambahSaldo(
-                    trxBaru.getJumlah()
+                    trx.getJumlah()
             );
 
         }
 
-        transactionDAO
-                .updateTransaction(
-                        trxBaru
+        // ======================
+        // UPDATE WALLET
+        // ======================
+
+        boolean walletUpdated =
+                walletDAO.updateWallet(
+                        wallet
                 );
 
-        System.out.println(
-                "Transaksi diupdate"
-        );
+        if(!walletUpdated){
+
+            return false;
+
+        }
+
+        // ======================
+        // DELETE TRANSACTION
+        // ======================
+
+        return transactionDAO
+                .deleteTransaction(
+                        transactionId
+                );
 
     }
+    
+    // =========================
+    // UPDATE TRANSACTION
+    // =========================
 
+//     public void updateTransaction(
+//             Transaction trxBaru
+//     ) {
+
+//         Transaction trxLama =
+//                 transactionDAO
+//                 .getTransaction(
+//                         trxBaru.getId()
+//                 );
+
+//         if (
+//                 trxLama == null
+//         ) {
+
+//             System.out.println(
+//                     "Transaksi tidak ditemukan"
+//             );
+
+//             return;
+
+//         }
+
+//         Wallet wallet =
+//                 walletDAO
+//                 .getWallet(
+//                         trxLama.getWalletId()
+//                 );
+
+//         Category oldCategory =
+//                 categoryDAO
+//                 .getCategory(
+//                         trxLama.getCategoryId()
+//                 );
+
+//         Category newCategory =
+//                 categoryDAO
+//                 .getCategory(
+//                         trxBaru.getCategoryId()
+//                 );
+
+//         // ======================
+//         // BALIK EFEK LAMA
+//         // ======================
+
+//         if (
+//                 oldCategory.getJenis()
+//                 ==
+//                 TransactionType.PENGELUARAN
+//         ) {
+
+//             wallet.tambahSaldo(
+//                     trxLama.getJumlah()
+//             );
+
+//         }
+
+//         else {
+
+//             wallet.kurangiSaldo(
+//                     trxLama.getJumlah()
+//             );
+
+//         }
+
+//         // ======================
+//         // TERAPKAN BARU
+//         // ======================
+
+//         if (
+//                 newCategory.getJenis()
+//                 ==
+//                 TransactionType.PENGELUARAN
+//         ) {
+
+//             boolean cukup =
+//                     wallet.kurangiSaldo(
+//                             trxBaru.getJumlah()
+//                     );
+
+//             if (
+//                     !cukup
+//             ) {
+
+//                 System.out.println(
+//                         "Saldo tidak cukup"
+//                 );
+
+//                 return;
+
+//             }
+
+//         }
+
+//         else {
+
+//             wallet.tambahSaldo(
+//                     trxBaru.getJumlah()
+//             );
+
+//         }
+
+//         transactionDAO
+//                 .updateTransaction(
+//                         trxBaru
+//                 );
+
+//         System.out.println(
+//                 "Transaksi diupdate"
+//         );
+
+//     }
+
+    public boolean updateTransaction(
+        Transaction trx
+    ){
+
+        return transactionDAO
+                .updateTransaction(
+                        trx
+                );
+
+    }
 }
