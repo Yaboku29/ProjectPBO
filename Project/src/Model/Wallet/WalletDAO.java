@@ -1,369 +1,251 @@
 package Model.Wallet;
 
 import Model.Connector;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.sql.*;
 import java.util.ArrayList;
 
 public class WalletDAO {
+    
+    public boolean createWallet(Wallet wallet) {
 
-    // =========================
-    // CREATE
-    // =========================
+        String sql =
+                "INSERT INTO wallets(user_id,nama,saldo) VALUES(?,?,?)";
 
-    public void createWallet(
-            Wallet wallet
-    ){
-
-        String query =
-                "INSERT INTO wallets " +
-                "(userID,nama,saldo) " +
-                "VALUES (?,?,?)";
-
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-        ){
-
-            ps.setInt(
+            stmt.setInt(
                     1,
                     wallet.getUserId()
             );
 
-            ps.setString(
+            stmt.setString(
                     2,
                     wallet.getNama()
             );
 
-            ps.setDouble(
+            stmt.setDouble(
                     3,
                     wallet.getSaldo()
             );
 
-            ps.executeUpdate();
+            return stmt.executeUpdate() > 0;
 
-            System.out.println(
-                    "Wallet berhasil dibuat"
-            );
-
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
+        return false;
     }
 
-    // =========================
-    // READ SATU
-    // =========================
+    public Wallet getWallet(int id) {
 
-    public Wallet getWallet(
-            int id
-    ){
+        String sql =
+                "SELECT * FROM wallets WHERE id=?";
 
-        String query =
-                "SELECT * FROM wallets " +
-                "WHERE id=?";
-
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-        ){
-
-            ps.setInt(
-                    1,
-                    id
-            );
+            stmt.setInt(1, id);
 
             ResultSet rs =
-                    ps.executeQuery();
+                    stmt.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
 
                 return new Wallet(
-
                         rs.getInt("id"),
-
-                        rs.getInt("userID"),
-
+                        rs.getInt("user_id"),
                         rs.getString("nama"),
-
                         rs.getDouble("saldo")
-
                 );
 
             }
 
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return null;
-
     }
 
-    // =========================
-    // READ SEMUA
-    // =========================
-
-    public ArrayList<Wallet>
-    getAllWallet(){
+    public ArrayList<Wallet> getAllWallet() {
 
         ArrayList<Wallet>
                 wallets =
                 new ArrayList<>();
 
-        String query =
+        String sql =
                 "SELECT * FROM wallets";
 
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                Statement st =
+                Statement stmt =
                         conn.createStatement();
 
                 ResultSet rs =
-                        st.executeQuery(
-                                query
-                        )
+                        stmt.executeQuery(sql)
+        ) {
 
-        ){
+            while (rs.next()) {
 
-            while(rs.next()){
-
-                Wallet wallet =
+                wallets.add(
                         new Wallet(
-
                                 rs.getInt("id"),
-
-                                rs.getInt("userID"),
-
+                                rs.getInt("user_id"),
                                 rs.getString("nama"),
-
                                 rs.getDouble("saldo")
-
-                        );
-
-                wallets.add(wallet);
+                        )
+                );
 
             }
 
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return wallets;
-
     }
-
-    // =========================
-    // GET BY USER ID
-    // =========================
-
-    public ArrayList<Wallet>
-    getByUserId(
-            int userId
-    ){
-
-        ArrayList<Wallet>
-                wallets =
-                new ArrayList<>();
-
-        String query =
-                "SELECT * FROM wallets " +
-                "WHERE userID=?";
-
-        try(
-
-                Connection conn =
-                        Connector.connect();
-
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
-
-        ){
-
-            ps.setInt(
-                    1,
-                    userId
-            );
-
-            ResultSet rs =
-                    ps.executeQuery();
-
-            while(rs.next()){
-
-                Wallet wallet =
-                        new Wallet(
-
-                                rs.getInt("id"),
-
-                                rs.getInt("userID"),
-
-                                rs.getString("nama"),
-
-                                rs.getDouble("saldo")
-
-                        );
-
-                wallets.add(wallet);
-
-            }
-
-        }
-
-        catch(SQLException e){
-
-            e.printStackTrace();
-
-        }
-
-        return wallets;
-
-    }
-
-    // =========================
-    // UPDATE
-    // =========================
 
     public boolean updateWallet(
-            Wallet walletBaru
-    ){
+            Wallet wallet
+    ) {
 
-        String query =
-                "UPDATE wallets " +
-                "SET userID=?, " +
-                "nama=?, " +
-                "saldo=? " +
-                "WHERE id=?";
+        String sql =
+                "UPDATE wallets SET user_id=?, nama=?, saldo=? WHERE id=?";
 
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-        ){
-
-            ps.setInt(
+            stmt.setInt(
                     1,
-                    walletBaru.getUserId()
+                    wallet.getUserId()
             );
 
-            ps.setString(
+            stmt.setString(
                     2,
-                    walletBaru.getNama()
+                    wallet.getNama()
             );
 
-            ps.setDouble(
+            stmt.setDouble(
                     3,
-                    walletBaru.getSaldo()
+                    wallet.getSaldo()
             );
 
-            ps.setInt(
+            stmt.setInt(
                     4,
-                    walletBaru.getId()
+                    wallet.getId()
             );
 
-            int rows =
-                    ps.executeUpdate();
+            return stmt.executeUpdate() > 0;
 
-            return rows > 0;
-
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return false;
-
     }
-
-    // =========================
-    // DELETE
-    // =========================
 
     public boolean deleteWallet(
             int id
-    ){
+    ) {
 
-        String query =
-                "DELETE FROM wallets " +
-                "WHERE id=?";
+        String sql =
+                "DELETE FROM wallets WHERE id=?";
 
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+                ) {
 
-        ){
+            stmt.setInt(1, id);
 
-            ps.setInt(
-                    1,
-                    id
-            );
+            return stmt.executeUpdate() > 0;
 
-            int rows =
-                    ps.executeUpdate();
-
-            return rows > 0;
-
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return false;
+    }
+    
+    public ArrayList<Wallet> getByUserId(
+        int userId
+    ) {
+
+    ArrayList<Wallet> wallets =
+            new ArrayList<>();
+
+    String sql =
+            "SELECT * FROM wallets WHERE user_id=?";
+
+    try (
+            Connection conn =
+                    Connector.getConnection();
+
+            PreparedStatement stmt =
+                    conn.prepareStatement(sql)
+            ) {
+
+        stmt.setInt(
+                1,
+                userId
+        );
+
+        ResultSet rs =
+                stmt.executeQuery();
+
+        while (rs.next()) {
+
+            wallets.add(
+                    new Wallet(
+                            rs.getInt("id"),
+                            rs.getInt("user_id"),
+                            rs.getString("nama"),
+                            rs.getDouble("saldo")
+                    )
+            );
+
+        }
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
 
     }
 
+    return wallets;
+    
+    }
+    
 }

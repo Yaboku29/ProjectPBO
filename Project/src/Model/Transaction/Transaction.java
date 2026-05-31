@@ -1,21 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Transaction;
 
 import java.time.LocalDate;
-import Model.FinancialRecord;
-public class Transaction extends FinancialRecord {
 
+public class Transaction {
     private int id;
     private int walletId;
     private int categoryId;
-
     private double jumlah;
-
     private String deskripsi;
-
     private LocalDate tanggal;
 
     public Transaction(){}
@@ -29,7 +21,9 @@ public class Transaction extends FinancialRecord {
             LocalDate tanggal
     ){
 
-        super(id,walletId);
+        this.id=id;
+
+        this.walletId=walletId;
 
         this.categoryId=categoryId;
 
@@ -39,6 +33,24 @@ public class Transaction extends FinancialRecord {
 
         this.tanggal=tanggal;
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id=id;
+    }
+
+    public int getWalletId() {
+        return walletId;
+    }
+
+    public void setWalletId(
+            int walletId
+    ){
+        this.walletId=walletId;
     }
 
     public int getCategoryId() {

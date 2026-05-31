@@ -1,15 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Budget;
-import Model.FinancialRecord;
-import Model.Wallet.*;
-/**
- *
- * @author Admin
- */
-public class Budget extends FinancialRecord{
+
+public class Budget {
 
     private int id;
 
@@ -23,12 +14,21 @@ public class Budget extends FinancialRecord{
             double limitHarian
     ) {
 
-        super(id,walletId);
+        this.id=id;
+
+        this.walletId=walletId;
 
         this.limitHarian=limitHarian;
 
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getWalletId() {
+        return walletId;
+    }
 
     public double getLimitHarian() {
         return limitHarian;

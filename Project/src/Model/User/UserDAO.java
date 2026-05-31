@@ -1,145 +1,52 @@
 package Model.User;
 
 import Model.Connector;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import Model.User.User;
+import java.sql.*;
 
 public class UserDAO {
 
-    // =========================
-    // CREATE USER
-    // =========================
+    public boolean register(User user) {
+        String query = "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
 
-    public boolean createUser(
-        User user
-    ){
+        try (Connection conn = Connector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        String query =
-                "INSERT INTO users " +
-                "(username,nama,email,password) " +
-                "VALUES (?,?,?,?)";
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPassword());
 
-        try(
+            return stmt.executeUpdate() > 0;
 
-                Connection conn =
-                        Connector.connect();
-
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
-
-        ){
-
-            ps.setString(
-                    1,
-                    user.getUsername()
-            );
-
-            ps.setString(
-                    2,
-                    user.getNama()
-            );
-
-            ps.setString(
-                    3,
-                    user.getEmail()
-            );
-
-            ps.setString(
-                    4,
-                    user.getPassword()
-            );
-
-            ps.executeUpdate();
-
-            return true;
-
-        }
-
-        catch(SQLException e){
-
+        } catch (SQLException e) {
             e.printStackTrace();
-
+            return false;
         }
-
-        return false;
-
     }
 
-    // =========================
-    // LOGIN
-    // =========================
+    public User login(String username, String password) {
+        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
 
-    public User login(
+        try (Connection conn = Connector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        String username,
-        String password
+            stmt.setString(1, username);
+            stmt.setString(2, password);
 
-    ){
+            ResultSet rs = stmt.executeQuery();
 
-        String query =
-                "SELECT * FROM users " +
-                "WHERE username=? " +
-                "AND password=?";
-
-        try(
-
-                Connection conn =
-                        Connector.connect();
-
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
-
-        ){
-
-            ps.setString(
-                    1,
-                    username
-            );
-
-            ps.setString(
-                    2,
-                    password
-            );
-
-            ResultSet rs =
-                    ps.executeQuery();
-
-            if(rs.next()){
-
-                return new User(
-
-                        rs.getInt("id"),
-
-                        rs.getString("username"),
-
-                        rs.getString("nama"),
-
-                        rs.getString("email"),
-
-                        rs.getString("password")
-
-                );
-
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                return user;
             }
 
-        }
-
-        catch(SQLException e){
-
+        } catch (SQLException e) {
             e.printStackTrace();
-
         }
 
         return null;
-
     }
-
 }

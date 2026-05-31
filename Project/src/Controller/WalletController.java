@@ -1,15 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controller;
 
-/**
- *
- * @author Admin
- */
+import Model.Wallet.Wallet;
+import Model.Wallet.WalletDAO;
+
 import java.util.ArrayList;
-import Model.Wallet.*;
 
 public class WalletController {
     private WalletDAO walletDAO;

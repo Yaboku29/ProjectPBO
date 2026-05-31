@@ -1,13 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model.Category;
 import Model.TransactionType;
-/**
- *
- * @author Admin
- */
+
 public class Category {
 
     private int id;
@@ -38,15 +31,5 @@ public class Category {
 
     public TransactionType getJenis() {
         return jenis;
-    }
-    @Override
-    public String toString(){
-
-        return nama
-                +
-                " - "
-                +
-                jenis;
-
     }
 }

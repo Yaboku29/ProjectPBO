@@ -1,367 +1,177 @@
 package Model.Category;
 
-import Model.TransactionType;
-
 import Model.Connector;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import Model.TransactionType;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class CategoryDAO {
-
-    // =========================
     // CREATE
-    // =========================
+    public boolean createCategory(Category category) {
 
-    public void createCategory(
-            Category category
-    ){
+        String sql =
+                "INSERT INTO categories(nama,jenis) VALUES(?,?)";
 
-        String query =
-                "INSERT INTO categories " +
-                "(nama,jenis) " +
-                "VALUES (?,?)";
-
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-        ){
-
-            ps.setString(
+            stmt.setString(
                     1,
                     category.getNama()
             );
 
-            ps.setString(
+            stmt.setString(
                     2,
-                    category
-                    .getJenis()
-                    .toString()
+                    category.getJenis().name()
             );
 
-            ps.executeUpdate();
+            return stmt.executeUpdate() > 0;
 
-            System.out.println(
-                    "Category berhasil dibuat"
-            );
-
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
+        return false;
     }
 
-    // =========================
     // READ SATU
-    // =========================
+    public Category getCategory(int id) {
 
-    public Category getCategory(
-            int id
-    ){
+        String sql =
+                "SELECT * FROM categories WHERE id=?";
 
-        String query =
-                "SELECT * FROM categories " +
-                "WHERE id=?";
-
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-        ){
-
-            ps.setInt(
-                    1,
-                    id
-            );
+            stmt.setInt(1, id);
 
             ResultSet rs =
-                    ps.executeQuery();
+                    stmt.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
 
                 return new Category(
-
                         rs.getInt("id"),
-
                         rs.getString("nama"),
-
                         TransactionType.valueOf(
                                 rs.getString("jenis")
                         )
-
                 );
 
             }
 
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return null;
-
     }
-    // =========================
-    // READ ALL
-    // =========================
 
-    public ArrayList<Category>
-    getAllCategory(){
+    // READ ALL
+    public ArrayList<Category> getAllCategory() {
 
         ArrayList<Category>
                 categories =
                 new ArrayList<>();
 
-        String query =
+        String sql =
                 "SELECT * FROM categories";
 
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                Statement st =
+                Statement stmt =
                         conn.createStatement();
 
                 ResultSet rs =
-                        st.executeQuery(
-                                query
-                        )
+                        stmt.executeQuery(sql)
+        ) {
 
-        ){
+            while (rs.next()) {
 
-            while(rs.next()){
-
-                Category category =
+                categories.add(
                         new Category(
-
                                 rs.getInt("id"),
-
                                 rs.getString("nama"),
-
                                 TransactionType.valueOf(
                                         rs.getString("jenis")
                                 )
-
-                        );
-
-                categories.add(
-                        category
+                        )
                 );
 
             }
 
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return categories;
-
     }
-
-    // =========================
+    
     // UPDATE
-    // =========================
-
-    public boolean updateCategory(
-            Category categoryBaru
-    ){
-
-        String query =
-                "UPDATE categories " +
-                "SET nama=?, " +
-                "jenis=? " +
-                "WHERE id=?";
-
-        try(
-
-                Connection conn =
-                        Connector.connect();
-
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
-
-        ){
-
-            ps.setString(
-                    1,
-                    categoryBaru.getNama()
-            );
-
-            ps.setString(
-                    2,
-                    categoryBaru
-                    .getJenis()
-                    .toString()
-            );
-
-            ps.setInt(
-                    3,
-                    categoryBaru.getId()
-            );
-
-            int rows =
-                    ps.executeUpdate();
-
-            return rows > 0;
-
-        }
-
-        catch(SQLException e){
-
+    public boolean updateCategory(Category category) {
+        
+        String sql =
+                "UPDATE categories SET nama=?, jenis=? WHERE id=?";
+        
+        try (Connection conn = Connector.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+                ) {
+            stmt.setString(1, category.getNama());
+            stmt.setString(2, category.getJenis().name());
+            stmt.setInt(3, category.getId());
+            
+            return stmt.executeUpdate() > 0;
+        
+        } catch (SQLException e) {
             e.printStackTrace();
-
         }
-
+        
         return false;
-
     }
 
-    // =========================
     // DELETE
-    // =========================
+    public boolean deleteCategory(int id) {
 
-    public boolean deleteCategory(
-        int id
-    ){
+        String sql =
+                "DELETE FROM categories WHERE id=?";
 
-        String query =
-                "DELETE FROM categories " +
-                "WHERE id=?";
-
-        try(
-
+        try (
                 Connection conn =
-                        Connector.connect();
+                        Connector.getConnection();
 
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
+                PreparedStatement stmt =
+                        conn.prepareStatement(sql)
+        ) {
 
-        ){
+            stmt.setInt(1, id);
 
-            ps.setInt(
-                    1,
-                    id
-            );
+            return stmt.executeUpdate() > 0;
 
-            int rows =
-                    ps.executeUpdate();
-
-            return rows > 0;
-
-        }
-
-        catch(SQLException e){
+        } catch (SQLException e) {
 
             e.printStackTrace();
 
         }
 
         return false;
-
-    }
-
-    // =========================
-    // GET BY JENIS
-    // =========================
-
-    public ArrayList<Category>
-    getByJenis(
-            TransactionType jenis
-    ){
-
-        ArrayList<Category>
-                categories =
-                new ArrayList<>();
-
-        String query =
-                "SELECT * FROM categories" +
-                "WHERE jenis=?";
-
-        try(
-
-                Connection conn =
-                        Connector.connect();
-
-                PreparedStatement ps =
-                        conn.prepareStatement(
-                                query
-                        )
-
-        ){
-
-            ps.setString(
-                    1,
-                    jenis.toString()
-            );
-
-            ResultSet rs =
-                    ps.executeQuery();
-
-            while(rs.next()){
-
-                Category category =
-                        new Category(
-
-                                rs.getInt("id"),
-
-                                rs.getString("nama"),
-
-                                TransactionType.valueOf(
-                                        rs.getString("jenis")
-                                )
-
-                        );
-
-                categories.add(
-                        category
-                );
-
-            }
-
-        }
-
-        catch(SQLException e){
-
-            e.printStackTrace();
-
-        }
-
-        return categories;
-
     }
 
 }
