@@ -7,15 +7,17 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
+//import Session.Session;
 
 public class WalletView extends JFrame {
     private User user;
     private JTable table;
     private DefaultTableModel model;
+    private WalletDAO walletDAO;
     
     public WalletView(User user){
         this.user = user;
-        
+        walletDAO=new WalletDAO();
         setTitle("Wallet Management");
         setSize(700, 500);
         setLocationRelativeTo(null);
@@ -40,8 +42,8 @@ public class WalletView extends JFrame {
                 },0
         );
         
-        //WalletDAO walletDAO =
-                //new WalletDAO();
+//        WalletDAO walletDAO =
+//                new WalletDAO();
         
         //ArrayList<Wallet> wallets =
                 //walletDAO.getByUserId(
@@ -72,12 +74,15 @@ public class WalletView extends JFrame {
         JButton btnTambah = new JButton("Tambah Wallet");
         JButton btnEdit = new JButton("Edit Wallet");
         JButton btnHapus = new JButton("Hapus Wallet");
+        JButton btnKembali = new JButton("Kembali");
+        
         
         JPanel buttonPanel = new JPanel();
         
         buttonPanel.add(btnTambah);
         buttonPanel.add(btnEdit);
         buttonPanel.add(btnHapus);
+        buttonPanel.add(btnKembali);
         
         panel.add(title, BorderLayout.NORTH);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);
@@ -88,38 +93,119 @@ public class WalletView extends JFrame {
         loadWallet();
         
         btnTambah.addActionListener(e -> {
-            String nama = JOptionPane.showInputDialog(
-                    this,
-                    "Masukkan Nama Wallet"
+
+            JTextField namaField =
+                    new JTextField();
+
+            JTextField saldoField =
+                    new JTextField();
+
+            JPanel panelInput =
+                    new JPanel(
+                            new GridLayout(
+                                    2,
+                                    2
+                            )
+                    );
+
+            panelInput.add(
+                    new JLabel(
+                            "Nama Wallet"
+                    )
             );
-            
+
+            panelInput.add(
+                    namaField
+            );
+
+            panelInput.add(
+                    new JLabel(
+                            "Saldo Awal"
+                    )
+            );
+
+            panelInput.add(
+                    saldoField
+            );
+
+            int result =
+                    JOptionPane.showConfirmDialog(
+                            this,
+                            panelInput,
+                            "Tambah Wallet",
+                            JOptionPane.OK_CANCEL_OPTION
+                    );
+
             if(
-                    nama == null
-                    ||
-                    nama.trim().isEmpty()
-                    ){
+                    result
+                    !=
+                    JOptionPane.OK_OPTION
+            ){
                 return;
             }
-            
-            Wallet wallet = new Wallet(0, user.getId(), nama, 0);
-            
-            WalletDAO dao = new WalletDAO();
-            
-            boolean berhasil = dao.createWallet(wallet);
-            
-            if(berhasil){
+
+            String nama =
+                    namaField
+                    .getText()
+                    .trim();
+
+            if(
+                    nama.isEmpty()
+            ){
+
                 JOptionPane.showMessageDialog(
                         this,
-                        "Wallet berhasil ditambahkan");
-                
-                loadWallet();
-                
-            } else{
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Gagal menambahkan wallet");
-                
+                        "Nama wallet tidak boleh kosong"
+                );
+
+                return;
+
             }
+
+            double saldoAwal;
+
+            try{
+
+                saldoAwal =
+                        Double.parseDouble(
+                                saldoField
+                                .getText()
+                        );
+
+            }
+
+            catch(
+                    NumberFormatException ex
+            ){
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Saldo harus berupa angka"
+                );
+
+                return;
+
+            }
+
+            Wallet wallet =
+                    new Wallet(
+
+                            0,
+
+                            user.getId(),
+
+                            nama,
+
+                            saldoAwal
+
+                    );
+
+            walletDAO.createWallet(
+                    wallet
+            );
+
+            loadWallet();
+
         });
         
         btnEdit.addActionListener(e -> {
@@ -154,7 +240,7 @@ public class WalletView extends JFrame {
                     ){
                 return;
             }
-            
+             
             Wallet wallet =
                     new Wallet(
                             id, user.getId(), namaBaru, Double.parseDouble(
@@ -238,6 +324,15 @@ public class WalletView extends JFrame {
                 }
             }
         
+        });
+
+        btnKembali.addActionListener(e -> {
+
+        new DashboardView(user)
+                .setVisible(true);
+
+        dispose();
+
         });
        
     }

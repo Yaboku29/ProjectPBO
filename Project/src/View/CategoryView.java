@@ -299,14 +299,25 @@ public class CategoryView extends JFrame {
             }
 
         });
+        JButton btnKembali = new JButton("Kembali");
+        
+        
+        btnKembali.addActionListener(e -> {
 
+        new DashboardView(user)
+                .setVisible(true);
+
+        dispose();
+
+        });
         JPanel buttonPanel =
                 new JPanel();
 
         buttonPanel.add(btnTambah);
         buttonPanel.add(btnEdit);
         buttonPanel.add(btnHapus);
-
+        buttonPanel.add(btnKembali);
+        
         panel.add(
                 title,
                 BorderLayout.NORTH

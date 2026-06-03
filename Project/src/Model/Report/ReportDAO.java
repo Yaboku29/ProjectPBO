@@ -1,9 +1,12 @@
 package Model.Report;
 
 import Model.Connector;
+import Model.TransactionType;
+
 import java.sql.*;
 
 public class ReportDAO {
+
     public Report generateReport(
             int walletId
     ) {
@@ -12,14 +15,27 @@ public class ReportDAO {
         double pengeluaran = 0;
 
         String sql =
-                "SELECT jenis, jumlah FROM transactions WHERE wallet_id= ?";
+
+                "SELECT t.jumlah, c.jenis " +
+
+                "FROM transactions t " +
+
+                "JOIN categories c " +
+
+                "ON t.category_id = c.id " +
+
+                "WHERE t.wallet_id = ?";
 
         try (
+
                 Connection conn =
                         Connector.getConnection();
 
                 PreparedStatement stmt =
-                        conn.prepareStatement(sql)
+                        conn.prepareStatement(
+                                sql
+                        )
+
         ) {
 
             stmt.setInt(
@@ -30,41 +46,60 @@ public class ReportDAO {
             ResultSet rs =
                     stmt.executeQuery();
 
-            while (rs.next()) {
+            while (
+                    rs.next()
+            ) {
 
                 String jenis =
-                        rs.getString("jenis");
+                        rs.getString(
+                                "jenis"
+                        );
 
                 double jumlah =
-                        rs.getDouble("jumlah");
+                        rs.getDouble(
+                                "jumlah"
+                        );
 
                 if (
                         jenis.equalsIgnoreCase(
-                                "Pemasukan"
+                                TransactionType
+                                        .PEMASUKAN
+                                        .toString()
                         )
                 ) {
 
-                    pemasukan += jumlah;
+                    pemasukan +=
+                            jumlah;
 
                 }
 
                 else {
 
-                    pengeluaran += jumlah;
+                    pengeluaran +=
+                            jumlah;
 
                 }
 
             }
 
-        } catch (SQLException e) {
+        }
+
+        catch (
+                SQLException e
+        ) {
 
             e.printStackTrace();
 
         }
 
         return new Report(
+
                 pemasukan,
+
                 pengeluaran
+
         );
+
     }
+
 }

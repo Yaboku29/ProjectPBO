@@ -27,22 +27,31 @@ public class TransactionController {
         return transactionDAO;
     }
 
-    public void tambahTransaksi(Transaction trx) {
-        Wallet wallet =walletDAO.getWallet(trx.getWalletId());
-        // cek wallet
+    public void tambahTransaksi(
+        Transaction trx
+    ) {
+
+        Wallet wallet =
+                walletDAO.getWallet(
+                        trx.getWalletId()
+                );
+
         if (wallet == null) {
-            System.out.println("Wallet tidak ditemukan");
+
+            System.out.println(
+                    "Wallet tidak ditemukan"
+            );
+
             return;
+
         }
+
         Category category =
-                categoryDAO
-                .getCategory(
+                categoryDAO.getCategory(
                         trx.getCategoryId()
                 );
 
-        if (
-                category == null
-        ) {
+        if (category == null) {
 
             System.out.println(
                     "Kategori tidak ditemukan"
@@ -52,60 +61,50 @@ public class TransactionController {
 
         }
 
-        // ======================
-        // VALIDASI JENIS
-        // ======================
+        TransactionType jenis =
+                category.getJenis();
 
-        if (
-                //category.getJenis().toString()
-                //!=
-                //trx.getJenis()
-                !category.getJenis().toString().equals(trx.getJenis())
-        ) {
-
-            System.out.println(
-                    "Jenis transaksi tidak cocok dengan kategori"
-            );
-
-            return;
-
-        }
         // ======================
         // CEK BUDGET
         // ======================
 
-        Budget budget =budgetDAO.getByWalletId(trx.getWalletId());
-        if(
-            budget != null
-            &&
-            trx.getJenis().equals(TransactionType.PENGELUARAN.toString())
-            //trx.getJenis()
-            //==
-            //TransactionType
-            //.Pengeluaran.toString()
-        ){
+        Budget budget =
+                budgetDAO.getByWalletId(
+                        trx.getWalletId()
+                );
+
+        if (
+                budget != null
+                &&
+                jenis
+                ==
+                TransactionType.PENGELUARAN
+        ) {
 
             double totalHariIni = 0;
 
-            for(
+            for (
                     Transaction t
                     :
                     transactionDAO.getByDate(
                             trx.getTanggal()
                     )
-            ){
+            ) {
 
-                if(
+                Category c =
+                        categoryDAO.getCategory(
+                                t.getCategoryId()
+                        );
+
+                if (
                         t.getWalletId()
                         ==
                         trx.getWalletId()
                         &&
-                        t.getJenis().equals(TransactionType.PENGELUARAN.toString())
-                        //t.getJenis()
-                        //==
-                        //TransactionType
-                        //.Pengeluaran.toString()
-                ){
+                        c.getJenis()
+                        ==
+                        TransactionType.PENGELUARAN
+                ) {
 
                     totalHariIni +=
                             t.getJumlah();
@@ -119,12 +118,11 @@ public class TransactionController {
                     +
                     trx.getJumlah();
 
-            if(
+            if (
                     totalBaru
                     >
-                    budget
-                    .getLimitHarian()
-            ){
+                    budget.getLimitHarian()
+            ) {
 
                 System.out.println(
                         "Melebihi budget harian"
@@ -135,22 +133,20 @@ public class TransactionController {
             }
 
         }
+
         // ======================
         // UPDATE SALDO
         // ======================
 
         if (
-                trx.getJenis().equals(TransactionType.PEMASUKAN.toString())
-                //trx.getJenis()
-                //==
-                //TransactionType.Pemasukan.toString()
+                jenis
+                ==
+                TransactionType.PEMASUKAN
         ) {
 
             wallet.tambahSaldo(
                     trx.getJumlah()
             );
-            
-            walletDAO.updateWallet(wallet); // update database
 
         }
 
@@ -161,9 +157,7 @@ public class TransactionController {
                             trx.getJumlah()
                     );
 
-            if (
-                    !cukup
-            ) {
+            if (!cukup) {
 
                 System.out.println(
                         "Saldo tidak cukup"
@@ -172,82 +166,186 @@ public class TransactionController {
                 return;
 
             }
-            
-            walletDAO.updateWallet(wallet); // update database
 
         }
 
-        transactionDAO.createTransaction(trx);
-        System.out.println("Transaksi berhasil");
+        walletDAO.updateWallet(
+                wallet
+        );
+
+        transactionDAO.createTransaction(
+                trx
+        );
+
+        System.out.println(
+                "Transaksi berhasil"
+        );
+
     }
 
-    public void deleteTransaction(int transactionId) {
-        Transaction trx =transactionDAO.getTransaction(transactionId);
+    public void deleteTransaction(
+        int transactionId
+    ) {
+
+        Transaction trx =
+                transactionDAO.getTransaction(
+                        transactionId
+                );
+
         if (trx == null) {
-            System.out.println("Transaksi tidak ditemukan");
+
+            System.out.println(
+                    "Transaksi tidak ditemukan"
+            );
+
             return;
+
         }
-        Wallet wallet = walletDAO.getWallet(trx.getWalletId());
 
-        // Kembalikan saldo
-        if (trx.getJenis().equals("Pengeluaran")) {
+        Wallet wallet =
+                walletDAO.getWallet(
+                        trx.getWalletId()
+                );
 
-            wallet.tambahSaldo(trx.getJumlah());
+        Category category =
+                categoryDAO.getCategory(
+                        trx.getCategoryId()
+                );
+
+        if (
+                wallet == null
+                ||
+                category == null
+        ) {
+
+            return;
+
+        }
+
+        if (
+                category.getJenis()
+                ==
+                TransactionType.PENGELUARAN
+        ) {
+
+            wallet.tambahSaldo(
+                    trx.getJumlah()
+            );
 
         }
 
         else {
 
-            wallet.kurangiSaldo(trx.getJumlah());
+            wallet.kurangiSaldo(
+                    trx.getJumlah()
+            );
 
         }
-        
-        walletDAO.updateWallet(wallet);
-        
-        transactionDAO.deleteTransaction(transactionId);
-        System.out.println("Transaksi dihapus");
+
+        walletDAO.updateWallet(
+                wallet
+        );
+
+        transactionDAO.deleteTransaction(
+                transactionId
+        );
+
+        System.out.println(
+                "Transaksi dihapus"
+        );
+
     }
 
-    public void updateTransaction(Transaction trxBaru) {
-        Transaction trxLama =transactionDAO.getTransaction(trxBaru.getId());
+    public void updateTransaction(
+        Transaction trxBaru
+    ) {
+
+        Transaction trxLama =
+                transactionDAO.getTransaction(
+                        trxBaru.getId()
+                );
+
         if (trxLama == null) {
 
-            System.out.println("Transaksi tidak ditemukan");
+            System.out.println(
+                    "Transaksi tidak ditemukan"
+            );
+
             return;
 
         }
 
-        Wallet wallet =walletDAO.getWallet(trxLama.getWalletId());
+        Wallet wallet =
+                walletDAO.getWallet(
+                        trxLama.getWalletId()
+                );
 
-        // ======================
-        // BALIK EFEK LAMA
-        // ======================
+        Category kategoriLama =
+                categoryDAO.getCategory(
+                        trxLama.getCategoryId()
+                );
 
-        if (trxLama.getJenis().equals("Pengeluaran")) {
+        Category kategoriBaru =
+                categoryDAO.getCategory(
+                        trxBaru.getCategoryId()
+                );
 
-            wallet.tambahSaldo(trxLama.getJumlah());
+        if (
+                wallet == null
+                ||
+                kategoriLama == null
+                ||
+                kategoriBaru == null
+        ) {
+
+            return;
 
         }
 
-        else {
-
-            wallet.kurangiSaldo(trxLama.getJumlah());
-
-        }
-
         // ======================
-        // TERAPKAN BARU
+        // BALIKKAN EFEK LAMA
         // ======================
 
         if (
-                trxBaru.getJenis().equals("Pengeluaran")
+                kategoriLama.getJenis()
+                ==
+                TransactionType.PENGELUARAN
         ) {
 
-            boolean cukup =wallet.kurangiSaldo(trxBaru.getJumlah());
+            wallet.tambahSaldo(
+                    trxLama.getJumlah()
+            );
+
+        }
+
+        else {
+
+            wallet.kurangiSaldo(
+                    trxLama.getJumlah()
+            );
+
+        }
+
+        // ======================
+        // TERAPKAN EFEK BARU
+        // ======================
+
+        if (
+                kategoriBaru.getJenis()
+                ==
+                TransactionType.PENGELUARAN
+        ) {
+
+            boolean cukup =
+                    wallet.kurangiSaldo(
+                            trxBaru.getJumlah()
+                    );
 
             if (!cukup) {
 
-                System.out.println("Saldo tidak cukup");
+                System.out.println(
+                        "Saldo tidak cukup"
+                );
 
                 return;
 
@@ -262,16 +360,17 @@ public class TransactionController {
             );
 
         }
-        
-        walletDAO.updateWallet(wallet);
 
-        transactionDAO
-                .updateTransaction(
-                        trxBaru
-                );
+        walletDAO.updateWallet(
+                wallet
+        );
+
+        transactionDAO.updateTransaction(
+                trxBaru
+        );
 
         System.out.println(
-                "Transaksi diupdate"
+                "Transaksi berhasil diupdate"
         );
 
     }

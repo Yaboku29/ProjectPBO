@@ -109,22 +109,27 @@ public class DashboardView extends JFrame {
         
         btnCategory.addActionListener(e -> {
             new CategoryView(user).setVisible(true);
+            dispose();
         });
         
         btnReport.addActionListener(e -> {
             new ReportView(user).setVisible(true);
+            dispose();
         });
         
         btnBudget.addActionListener(e -> {
             new BudgetView(user).setVisible(true);
+            dispose();
         });
         
         btnTransaction.addActionListener(e -> {
             new TransactionView(user).setVisible(true);
+            dispose();
         });
         
         btnWallet.addActionListener(e -> {
             new WalletView(user).setVisible(true);
+            dispose();
         });
         
         btnLogout.addActionListener(e -> {

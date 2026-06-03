@@ -501,6 +501,17 @@ public class TransactionView extends JFrame {
             }
         
         });
+        JButton btnKembali = new JButton("Kembali");
+        buttonPanel.add(btnKembali);
+        
+        btnKembali.addActionListener(e -> {
+
+        new DashboardView(user)
+                .setVisible(true);
+
+        dispose();
+
+        });
     
     }
 

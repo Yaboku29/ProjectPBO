@@ -381,12 +381,22 @@ public class BudgetView extends JFrame {
                 }
             }
         });
+        JButton btnKembali = new JButton("Kembali");
         
         JPanel buttonPanel = new JPanel();
+        btnKembali.addActionListener(e -> {
+
+        new DashboardView(user)
+                .setVisible(true);
+
+        dispose();
+
+        });
         
         buttonPanel.add(btnTambah);
         buttonPanel.add(btnEdit);
         buttonPanel.add(btnHapus);
+        buttonPanel.add(btnKembali);
         
         panel.add(title, BorderLayout.NORTH);
         panel.add(new JScrollPane(table), BorderLayout.CENTER);

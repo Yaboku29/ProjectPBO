@@ -67,10 +67,22 @@ public class ReportView extends JFrame {
         reportArea.setText(
                 laporan.toString()
         );
+        JPanel buttonPanel = new JPanel();
+                JButton btnKembali = new JButton("Kembali");
+                buttonPanel.add(btnKembali);
+
+                btnKembali.addActionListener(e -> {
+
+                new DashboardView(user)
+                        .setVisible(true);
+
+                dispose();
+
+                });
 
         panel.add(title, BorderLayout.NORTH);
         panel.add(new JScrollPane(reportArea), BorderLayout.CENTER);
-
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         add(panel);
         
     }
