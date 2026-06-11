@@ -14,7 +14,7 @@ public class Connector {
 
             if (connection == null || connection.isClosed()) {
 
-                String url = "jdbc:mysql://localhost:3306/wallet_db";
+                String url = "jdbc:mysql://localhost:3306/walet_db";
                 String user = "root";
                 String password = "";
 

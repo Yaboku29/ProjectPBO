@@ -91,7 +91,14 @@ public class DashboardView extends JFrame {
 //        + totalIncome
 //        - totalExpense;
         
-        JPanel cardBalance = createCard("Total Balance", "Rp " + totalBalance);
+        JPanel cardBalance =
+        createCard(
+                "Total Balance",
+                String.format(
+                        "Rp %,.0f",
+                        totalBalance
+                )
+        );
         
         JPanel cardIncome = createCard("Income", "Rp " + totalIncome);
         
