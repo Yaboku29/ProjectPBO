@@ -65,11 +65,12 @@ public class DashboardView extends JFrame {
         double totalIncome = 0;
         double totalExpense = 0;
         double totalBalance = 0;
-        
+
         for (Wallet wallet :
-                walletDAO.getByUserId(
-                        user.getId()
-                )) {
+                walletDAO.getByUserId(user.getId())) {
+
+            // saldo awal wallet
+            totalBalance += wallet.getSaldo();
 
             Report report =
                     reportDAO.generateReport(
@@ -78,14 +79,17 @@ public class DashboardView extends JFrame {
 
             totalIncome +=
                     report.getTotalPemasukan();
-            
+
             totalExpense +=
                     report.getTotalPengeluaran();
-            
-            totalBalance +=
-                    report.getSaldoAkhir();
-        
         }
+
+        // jika saldo wallet tidak otomatis berubah saat transaksi,
+        // tambahkan perhitungan berikut:
+//        totalBalance =
+//        totalBalance
+//        + totalIncome
+//        - totalExpense;
         
         JPanel cardBalance = createCard("Total Balance", "Rp " + totalBalance);
         

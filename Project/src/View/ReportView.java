@@ -61,7 +61,7 @@ public class ReportView extends JFrame {
             
             laporan.append("Total Pengeluaran : Rp " + report.getTotalPengeluaran() + "\n");
             
-            laporan.append("Saldo Akhir : Rp " + report.getSaldoAkhir() + "\n\n");
+            laporan.append("Selisih : Rp " + report.getSaldoAkhir() + "\n\n");
         }
         
         reportArea.setText(
